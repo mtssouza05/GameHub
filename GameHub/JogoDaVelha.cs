@@ -132,14 +132,15 @@ namespace GameHub
 
         public void Save(string? name, int point)
         {
-            Player player = new Player { Name = name, Points = point };
-            string json = JsonConvert.SerializeObject(player);
-            File.WriteAllText(@"C:\Users\matth\source\repos\GameHub", json);
+            Player player = new Player { Name = name, Points = point};
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = Path.Combine(documentsPath, "json.txt");
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(player));
         }
 
         public void ShowJson()
         {
-            string showjson = File.ReadAllText(@"C:\Users\matth\source\repos\GameHub\GameHub");
+            string showjson = File.ReadAllText(@"C:\Users\matth\OneDrive\Documentos\json.txt");
             var playerjson = JsonConvert.DeserializeObject<Player>(showjson);
             Console.WriteLine($"Nome: {playerjson.Name} || Pontuação: {playerjson.Points}");
         }

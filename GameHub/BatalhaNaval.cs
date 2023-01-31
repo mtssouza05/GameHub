@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,33 @@ namespace GameHub
                                       { '-', '-', '-', '-', '-', '-', '-', '-' },
                                       { '-', '-', '-', '-', '-', '-', '-', '-' } };
 
+        public void ShowTable(int number)
+        {
+            if (number == 1)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        Console.Write(GameTable2[i,j]);
+                    }
+                    Console.WriteLine();
+                }
+            }
+
+            else if (number == 2)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        Console.Write(GameTable1[i, j]);
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+
 
         public void PutLocalBoat(int number)
         {
@@ -33,6 +61,7 @@ namespace GameHub
             int linha = 0, coluna = 0;
             try
             {
+                Console.WriteLine($"Jogador {number}");
                 Console.WriteLine("Escolha a linha que deseja colocar o navio: ");
                 linha = int.Parse(Console.ReadLine());
 
@@ -133,7 +162,9 @@ namespace GameHub
 
         }
 
-        public void Play(int number)
+        bool isAlive = false;
+
+        public bool Play(int number)
         {
             int linhaBomba = 0, colunaBomba = 0;
             try
@@ -152,13 +183,31 @@ namespace GameHub
 
             if (number == 1)
             {
+                int endOfGame;
                 if(GameTable2[linhaBomba, colunaBomba] != '-')
                 {
                     Console.WriteLine("Acertou uma parte do Navio !");
+                    Console.ReadLine();
                     GameTable2[linhaBomba, colunaBomba] = '*';
+
+                    foreach(var variable in GameTable2)
+                    {
+                        if (variable == 'B' || variable == 'O' || variable == 'A' || variable == 'T')
+                        {
+                            isAlive = true;
+                        }
+                        else if(variable == '*')
+                        {
+                            isAlive = false;
+                        }
+                    }
                 }
                 else
+                {
                     Console.WriteLine("Nada foi atingido !");
+                    Console.ReadLine();
+                }
+
             }
 
             else if (number == 2)
@@ -166,16 +215,40 @@ namespace GameHub
                 if (GameTable1[linhaBomba, colunaBomba] != '-')
                 {
                     Console.WriteLine("Acertou uma parte do Navio !");
+                    Console.ReadLine();
                     GameTable1[linhaBomba, colunaBomba] = '*';
+
+                    foreach (var variable in GameTable2)
+                    {
+                        if (variable == 'B' || variable == 'O' || variable == 'A' || variable == 'T')
+                        {
+                            isAlive = true;
+                        }
+                        else if (variable == '*')
+                        {
+                            isAlive = false;
+                        }
+
+                    }
                 }
                 else
+                {
                     Console.WriteLine("Nada foi atingido !");
+                    Console.ReadLine();
+
+                }
             }
-            
+
+            return isAlive;
         }
+        public void Save(string? name, int point)
+        {
+            Player player = new Player { Name = name, Points = point };
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = Path.Combine(documentsPath, "json.txt");
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(player));
+        }
+
     }
 }
 
-// TODO 
-// Tentar colocar as funções em prática e checar se estão funcionandp
-// se não  estiverem, procurar e tratar erros, se sim, finalizar e lapidar todo o projeto
